@@ -19,6 +19,10 @@ class Restaurant(Base):
     name = Column(String())
     price = Column(Integer())
 
+#relationships 
+    reviews = relationship('Review', back_populates= 'restaurant')
+    customers = association_proxy('reviews', 'customer', creator=lambda cs: Review(customer=cs))
+
     def __repr__(self):
         return f"Restaurant(id={self.id}, name={self.name}, price={self.price})"
 
@@ -30,6 +34,9 @@ class Customer(Base):
     first_name = Column(String())
     last_name = Column(String())
 
+#relationships 
+    reviews = relationship('Review', back_populates='customer')
+    restaurants = restaurants = association_proxy('reviews', 'restaurant', creator=lambda rs: Review(restaurant=rs))
 
     def __repr__(self):
         return f'Customer(id={self.id}, first_name={self.first_name}, last_name={self.last_name})'
@@ -43,6 +50,9 @@ class Review(Base):
     restaurant_id = Column(Integer, ForeignKey('restaurants.id'))
     customer_id = Column(Integer, ForeignKey('customers.id'))
 
+#relationships 
+    restaurant = relationship('Restaurant', back_populates='reviews')
+    customer = relationship('Customer', back_populates='reviews')
 
     def __repr__(self):
         return f'Review(id={self.id}, comments={self.comments}, star_rating={self.star_rating})'
