@@ -8,7 +8,6 @@ from sqlalchemy.orm import sessionmaker
 Base = declarative_base()
 engine = create_engine("sqlite:///restaurants.db") 
 Base.metadata.create_all(engine) 
-
 Session = sessionmaker(bind=engine)
 session = Session() 
 
@@ -25,7 +24,12 @@ class Restaurant(Base):
 
     def __repr__(self):
         return f"Restaurant(id={self.id}, name={self.name}, price={self.price})"
+    
+    def reviews_for_restaurant(self):
+        return self.reviews
 
+    def customer_who_reviewed(self):
+        return [review.customer for review in self.reviews]
 
 class Customer(Base):
     __tablename__ = 'customers'
@@ -40,7 +44,12 @@ class Customer(Base):
 
     def __repr__(self):
         return f'Customer(id={self.id}, first_name={self.first_name}, last_name={self.last_name})'
+    
+    def reviews_by_customer(self):
+        return self.reviews
 
+    def restaurant_by_customer(self):
+        return [review.restaurant for review in self.reviews]
 
 class Review(Base):
     __tablename__ = 'reviews'
@@ -56,3 +65,9 @@ class Review(Base):
 
     def __repr__(self):
         return f'Review(id={self.id}, comments={self.comments}, star_rating={self.star_rating})'
+    
+    def customer_reviewed_this(self):
+        return self.customer
+
+    def restaurant_for_review(self):
+        return self.restaurant
